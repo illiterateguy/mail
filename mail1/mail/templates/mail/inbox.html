@@ -1,0 +1,107 @@
+{% extends "mail/layout.html" %}
+{% load static %}
+
+{% block body %}
+    <h2>{{ request.user.email }}</h2>
+
+    <button class="btn btn-sm btn-outline-primary" id="inbox">Inbox</button>
+    <button class="btn btn-sm btn-outline-primary" id="compose">Compose</button>
+    <button class="btn btn-sm btn-outline-primary" id="sent">Sent</button>
+    <button class="btn btn-sm btn-outline-primary" id="archived">Archived</button>
+    <a class="btn btn-sm btn-outline-primary" href="{% url 'logout' %}">Log Out</a>
+    <hr>
+
+    <div id="emails-view">
+    </div>
+
+    <div id="compose-view">
+        <h3>New Email</h3>
+        <form id="compose-form">
+            <div class="form-group">
+                From: <input disabled class="form-control" value="{{ request.user.email }}">
+            </div>
+            <div class="form-group">
+                To: <input id="compose-recipients" class="form-control">
+            </div>
+            <div class="form-group">
+                <input class="form-control" id="compose-subject" placeholder="Subject">
+            </div>
+            <textarea class="form-control" id="compose-body" placeholder="Body"></textarea>
+            <input type="submit" class="btn btn-primary"/>
+        </form>
+    </div>
+
+    <div id="email-view">
+    </div>
+
+    <script type="text/babel">
+        class Viewemail extends React.Component{
+            /*constructor(props)
+            {
+                super(props);
+                this.state = {
+                    sender : mail.sender ,
+                    recipents:mail.recipents,
+                    subject :mail.subject,
+                    timestamp :mail.timestamp ,
+                    body :mail.body
+                };
+            }
+            */
+            render(){
+                return(
+                    <div>
+                    <div>
+                        <b>From :</b> {this.props.sender} <br/> 
+                        <b>To :</b> {this.props.recipents} <br/>
+                        <b>Subject :</b> {this.props.subject} <br/>
+                        <b>Timestamp :</b>{this.props.timestamp} <br/>
+                        <span><button className="btn btn-sm btn-outline-primary" id="reply">Reply</button></span>
+                        <span className="ml-3"><button className="btn btn-sm btn-outline-primary" id="archive" onClick={archive(this.props.id)}>Archive</button></span>
+                    </div>
+                    
+                    <div className="mt-3 border-top pt-3 ">
+                        {this.props.body}
+                    </div>
+                    
+                    </div>
+                );
+            }
+
+            /*changemail = (mail) => {
+                this.setState( () => ({
+                    sender : mail.sender ,
+                    recipents:mail.recipents,
+                    subject :mail.subject,
+                    timestamp :mail.timestamp ,
+                    body :mail.body
+                })
+                )
+            }
+            */
+        }
+        console.log(window.mail)
+        
+        function tick() {
+        ReactDOM.render(<Viewemail   sender={mail.sender} recipents={mail.recipents} subject = {mail.subject} timestamp = {mail.timestamp} body= {mail.body} id={mail.id} />, document.querySelector("#email-view"));
+        }
+    </script>
+{% endblock %}
+
+{% block handlebar %}
+    <script id="template" type="text/x-handlebars-template">
+        {% verbatim %}
+        <div data-id=  "{{ email_id }}" class="email-box">
+            <b>{{ email_sender }}</b>
+            <span class="ml-2">{{ email_subject }}</span>
+            <span class="text-muted ml-auto float-right">{{ email_datetime }}</span>
+        </div>
+        {% endverbatim %}
+    </script>
+
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'mail/inbox.js' %}"></script>
+{% endblock %}
+
